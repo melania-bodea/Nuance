@@ -1,0 +1,5 @@
+Nuance is an AI-powered web and mobile application that focuses on personalized outfit recommendations based on the user's physical characteristics, preferences, and personal style. The application is designed for anyone who wants assistance in choosing outfits that suit them, using information provided through photographs, body measurements, and personal preferences.
+
+Through a digital wardrobe, users can receive outfit recommendations based on multiple factors, such as weather conditions, a specific piece of clothing, or their desired aesthetic. Nuance emphasizes personalization and user input, allowing users to adjust recommendations according to their preferences, measurements, skin tone, and undertone.
+
+The main goal of Nuance is to simplify the process of choosing outfits while helping users make better use of the clothes they already own.
