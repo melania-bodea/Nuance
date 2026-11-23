@@ -1,0 +1,6 @@
+@Nuance.API_HostAddress = http://localhost:5223
+
+GET {{Nuance.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

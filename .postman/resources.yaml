@@ -1,0 +1,6 @@
+# Use this workspace to collaborate
+workspace:
+  id: 17a3086b-92c1-42c2-8b8f-fae16793d929
+localResources:
+  specs:
+    - ..\backend\Nuance\Nuance.API\obj\Debug\net10.0\EndpointInfo\Nuance.API.json
