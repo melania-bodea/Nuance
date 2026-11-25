@@ -1,22 +1,61 @@
 ﻿using Nuance.API.Services.Interfaces;
 using Nuance.API.Models;
+using Nuance.API.Data;
+using Nuance.API.DTOs;
+using Microsoft.EntityFrameworkCore;
 
 namespace Nuance.API.Services
 {
     public class ClothingItemService : IClothingItemService
     {
-        private readonly List<ClothingItem> _items = new();
-        private int _nextId = 1;
-        public IEnumerable<ClothingItem> GetAll()
+        private readonly NuanceDbContext _context;
+        public ClothingItemService(NuanceDbContext context)
         {
-            return _items;
+            _context = context;
+        }
+        public async Task<List<ClothingItem>> GetAllAsync()
+        {
+            return await _context.ClothingItems.ToListAsync();
         }
 
-        public ClothingItem Add(ClothingItem item)
+        public async Task<ClothingItem> AddAsync(ClothingItem item)
         {
-            item.Id = _nextId++;
-            _items.Add(item);
+            _context.ClothingItems.Add(item);
+            await _context.SaveChangesAsync();
+
             return item;
+        }
+        public async Task<ClothingItem?> GetByIdAsync(int id)
+        {
+            return await _context.ClothingItems.FindAsync(id);
+        }
+        public async Task<ClothingItem?> UpdateAsync(int id, UpdateClothingItemDTO dto)
+        {
+            var item = await _context.ClothingItems.FindAsync(id);
+            if (item == null)
+            {
+                return null;
+            }
+            item.Name = dto.Name;
+            item.Color = dto.Color;
+            item.Size = dto.Size;
+            item.Category = dto.Category;
+            item.Material = dto.Material;
+
+            await _context.SaveChangesAsync();
+
+            return item;
+        }
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var item = await _context.ClothingItems.FindAsync(id);
+            if (item == null)
+            {
+                return false;
+            }
+            _context.ClothingItems.Remove(item);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
 }
