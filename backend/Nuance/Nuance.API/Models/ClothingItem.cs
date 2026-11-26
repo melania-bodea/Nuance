@@ -9,6 +9,8 @@
         public string Material { get; set; } = string.Empty;
         public string Size { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public int? WardrobeId { get; set; }
+        public Wardrobe? Wardrobe { get; set; } = null!;
 
 
     }

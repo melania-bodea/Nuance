@@ -3,6 +3,7 @@ using Nuance.API.Models;
 using Nuance.API.Data;
 using Nuance.API.DTOs;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace Nuance.API.Services
 {
@@ -18,8 +19,17 @@ namespace Nuance.API.Services
             return await _context.ClothingItems.ToListAsync();
         }
 
-        public async Task<ClothingItem> AddAsync(ClothingItem item)
+        public async Task<ClothingItem> AddAsync(ClothingItem item, int wardrobeId)
         {
+            var wardrobe = await _context.Wardrobes.FindAsync(wardrobeId);
+            if (wardrobe == null)
+            {
+                throw new InvalidOperationException("Wardrobe not found.");
+            }
+
+            item.WardrobeId = wardrobeId;
+            item.CreatedAt = DateTime.UtcNow;
+
             _context.ClothingItems.Add(item);
             await _context.SaveChangesAsync();
 
@@ -29,9 +39,13 @@ namespace Nuance.API.Services
         {
             return await _context.ClothingItems.FindAsync(id);
         }
-        public async Task<ClothingItem?> UpdateAsync(int id, UpdateClothingItemDTO dto)
+        public async Task<ClothingItem?> UpdateAsync(int id, UpdateClothingItemDTO dto, string userId)
         {
-            var item = await _context.ClothingItems.FindAsync(id);
+            var item = await _context.ClothingItems.FirstOrDefaultAsync(c =>
+            c.Id == id &&
+            c.Wardrobe != null &&
+            c.Wardrobe.UserId == userId);
+
             if (item == null)
             {
                 return null;
@@ -46,9 +60,12 @@ namespace Nuance.API.Services
 
             return item;
         }
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(int id, string userId)
         {
-            var item = await _context.ClothingItems.FindAsync(id);
+            var item = await _context.ClothingItems.FirstOrDefaultAsync(c =>
+                c.Id == id &&
+                c.Wardrobe != null &&
+                c.Wardrobe.UserId == userId);
             if (item == null)
             {
                 return false;
@@ -56,6 +73,10 @@ namespace Nuance.API.Services
             _context.ClothingItems.Remove(item);
             await _context.SaveChangesAsync();
             return true;
+        }
+        public async Task<IEnumerable<ClothingItem>> GetByWardrobeIdAsync(int wardrobeId)
+        {
+            return await _context.ClothingItems.Where(item => item.WardrobeId == wardrobeId).ToListAsync();
         }
     }
 }
